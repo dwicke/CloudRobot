@@ -116,7 +116,6 @@ def visualservo(blobx, bloby) :
     print '"%f"  "%f"' % (forV, angV)
     return forV, angV
 
-def goAfterBounty() :
 
 
 
