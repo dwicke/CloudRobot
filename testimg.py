@@ -16,7 +16,24 @@ MSGLEN = WIDTH*HEIGHT*CHANNELS
 
 def myreceive():
         data, addr = sock.recvfrom(1024)
-        return zlib.decompress(''.join(map(str, data)))
+        return zlib.decompress(data)
+        # binaryImageString = zlib.decompress(''.join(map(str, data)))
+        # colorData = []
+        # for c in binaryImageString:
+        #     if c == "1":
+        #         colorData.append(255)
+        #         colorData.append(255)
+        #         colorData.append(255)
+        #     else:
+        #         colorData.append(0)
+        #         colorData.append(0)
+        #         colorData.append(0)
+        # return colorData
+
+        # bgrImageString = []
+        # for p in binaryImageString:
+        #     if p == "1":
+        #         bgrImageString.append
         # chunks = []
         # bytes_recd = 0
         # while bytes_recd < MSGLEN:
@@ -31,15 +48,9 @@ def myreceive():
 def findBlob(frame):
 
     ## adapted from https://github.com/CarlosGS/GNBot/blob/master/Software/PreviousWork/OpenCV_tracking/BasicTests/test2.py
-    # smooth it
-    frame = cv2.blur(frame,(3,3))
 
-    # convert to hsv and find range of colors
-    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    ORANGE_MIN = np.array([5, 50, 50],np.uint8)
-    ORANGE_MAX = np.array([15, 255, 255],np.uint8)
-    thresh = cv2.inRange(hsv,ORANGE_MIN, ORANGE_MAX)
-    thresh = cv2.erode(thresh, None, iterations=2)
+
+    thresh = cv2.erode(frame, None, iterations=2)
     thresh = cv2.dilate(thresh, None, iterations=2)
     #thresh = cv2.inRange(hsv,np.array((0, 80, 80)), np.array((20, 255, 255)))
     #thresh = cv2.inRange(hsv,np.array((15, 155, 255)), np.array((15, 255, 255)))
@@ -51,20 +62,6 @@ def findBlob(frame):
     # find contours in the threshold image
     contours,hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
-
-
-    # circles = cv2.HoughCircles(thresh, cv2.cv.CV_HOUGH_GRADIENT, 1.2, 20)
-
-    # max_r = 0
-    # best_circ = (-1, -1)
-    # if circles is not None:
-    #     for (x, y, r) in circles:
-    #         if r > max_r :
-    #             max_r = r
-    #             best_circ = (x, y, r)
-
-    #     cv2.circle(frame,(best_circ[0], best_circ[1]), best_circ[2],255,-1)
-    # return thresh2, frame, best_circ[0], best_circ[1]
 
     #finding contour with maximum area and store it as best_cnt
     max_area = 0
@@ -92,12 +89,9 @@ def processSocketImage() :
 
     rcvimg = myreceive()
     print len(rcvimg)
-    #image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH,CHANNELS)
+    image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH)
 
-    #print 'decode'
-    #print image
-
-    return rcvimg
+    return image
 
 ## units are mm/s degrees/s
 def visualservo(blobx, bloby) :
@@ -121,19 +115,23 @@ def visualservo(blobx, bloby) :
     return forV, angV
 
 
-
+prevFor = 0.0
+prevAng = 0.0
 while True:
     image = processSocketImage()
     ## if goAfterBounty() then
 
 
-    # thresh, image, cx, cy = findBlob(image)
-    # print 'x = "%d" y = "%d"' % (cx, cy)
-    # cv2.imshow("Image", image)
-    # cv2.imshow("thresh", thresh)
-    # cv2.waitKey(1)
+    thresh, image, cx, cy = findBlob(image)
+    print 'x = "%d" y = "%d"' % (cx, cy)
+    cv2.imshow("Image", image)
+    cv2.imshow("thresh", thresh)
+    cv2.waitKey(1)
     # ## units are mm/s degrees/s
-    # forwardVelocity, angularVelocity = visualservo(cx, cy)
-    # data = '%f, %f' % (forwardVelocity, angularVelocity)
-    # vel_socket.sendto(data, ("10.112.120.19", 15000))
+    forwardVelocity, angularVelocity = visualservo(cx, cy)
+    data = '%f, %f' % (forwardVelocity, angularVelocity)
+    if prevFor != forwardVelocity or prevAng != angularVelocity:
+        prevFor = forwardVelocity
+        prevAng = angularVelocity
+        vel_socket.sendto(data, ("10.112.120.19", 15000))
 

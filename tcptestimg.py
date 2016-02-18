@@ -2,6 +2,7 @@
 import cv2
 import numpy as np
 import socket
+import zlib
 
 vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +30,7 @@ def findBlob(frame):
 
     ## adapted from https://github.com/CarlosGS/GNBot/blob/master/Software/PreviousWork/OpenCV_tracking/BasicTests/test2.py
     # smooth it
-    frame = cv2.blur(frame,(3,3))
+    #frame = cv2.blur(frame,(3,3))
 
     # convert to hsv and find range of colors
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
@@ -88,6 +89,7 @@ def processSocketImage() :
     #print 'Connected to server'
 
     rcvimg = myreceive()
+    #rcvimg = zlib.decompress(rcvimg)
     image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH,CHANNELS)
 
     #print 'decode'
