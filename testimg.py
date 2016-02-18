@@ -2,28 +2,31 @@
 import cv2
 import numpy as np
 import socket
+import zlib
 
 vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('0.0.0.0', 8052))
-sock.listen(1)
-conn, addr = sock.accept()
+#sock.listen(1)
+#conn, addr = sock.accept()
 HEIGHT = 240
 WIDTH = 320
 CHANNELS = 3
 MSGLEN = WIDTH*HEIGHT*CHANNELS
 
 def myreceive():
-        chunks = []
-        bytes_recd = 0
-        while bytes_recd < MSGLEN:
-            chunk = conn.recv(min(MSGLEN - bytes_recd, 2048))
-            if chunk == '':
-                raise RuntimeError("socket connection broken")
-            chunks.append(chunk)
-            bytes_recd = bytes_recd + len(chunk)
-            #print 'bytes read "%d" ' % (bytes_recd)
-        return ''.join(chunks)
+        data, addr = sock.recvfrom(1024)
+        return zlib.decompress(''.join(map(str, data)))
+        # chunks = []
+        # bytes_recd = 0
+        # while bytes_recd < MSGLEN:
+        #     chunk = conn.recv(min(MSGLEN - bytes_recd, 2048))
+        #     if chunk == '':
+        #         raise RuntimeError("socket connection broken")
+        #     chunks.append(chunk)
+        #     bytes_recd = bytes_recd + len(chunk)
+        #     #print 'bytes read "%d" ' % (bytes_recd)
+        # return ''.join(chunks)
 
 def findBlob(frame):
 
@@ -88,12 +91,13 @@ def processSocketImage() :
     #print 'Connected to server'
 
     rcvimg = myreceive()
-    image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH,CHANNELS)
+    print len(rcvimg)
+    #image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH,CHANNELS)
 
     #print 'decode'
     #print image
 
-    return image
+    return rcvimg
 
 ## units are mm/s degrees/s
 def visualservo(blobx, bloby) :
@@ -116,20 +120,20 @@ def visualservo(blobx, bloby) :
     print '"%f"  "%f"' % (forV, angV)
     return forV, angV
 
-def goAfterBounty() :
-
 
 
 while True:
     image = processSocketImage()
     ## if goAfterBounty() then
-    thresh, image, cx, cy = findBlob(image)
-    print 'x = "%d" y = "%d"' % (cx, cy)
-    cv2.imshow("Image", image)
-    cv2.imshow("thresh", thresh)
-    cv2.waitKey(1)
-    ## units are mm/s degrees/s
-    forwardVelocity, angularVelocity = visualservo(cx, cy)
-    data = '%f, %f' % (forwardVelocity, angularVelocity)
-    vel_socket.sendto(data, ("10.112.120.19", 15000))
+
+
+    # thresh, image, cx, cy = findBlob(image)
+    # print 'x = "%d" y = "%d"' % (cx, cy)
+    # cv2.imshow("Image", image)
+    # cv2.imshow("thresh", thresh)
+    # cv2.waitKey(1)
+    # ## units are mm/s degrees/s
+    # forwardVelocity, angularVelocity = visualservo(cx, cy)
+    # data = '%f, %f' % (forwardVelocity, angularVelocity)
+    # vel_socket.sendto(data, ("10.112.120.19", 15000))
 
