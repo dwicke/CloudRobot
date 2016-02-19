@@ -4,7 +4,8 @@ import numpy as np
 import socket
 import zlib
 import thread
-
+import json
+import sys
 
 vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -88,7 +89,9 @@ def bondsmanListener():
         print 'hi'
         data, addr = bondSock.recvfrom(60000)
         ## check if success or task
-
+        print data
+        listData = json.loads(data)
+        print listData[0]
         ## if success then learn
 
         ## if task then add it to the learning function ComplexP
@@ -99,7 +102,7 @@ prevFor = 0.0
 prevAng = 0.0
 
 try:
-    thread.start_new_thread( bondsmanListener )
+    thread.start_new_thread(bondsmanListener,())
 except:
    print "Error: unable to start thread"
 
