@@ -19,6 +19,7 @@ class DoNothing(object):
 class BountyHunter(object):
 
     def __init__(self):
+        self.BONDSMANPORT = 14000
         self.taskLock = Lock()
         self.taskSet = {}
         self.taskSet['DoNothing'] = {'handler':DoNothing, 'name': 'DoNothing', 'initBounty': 100.0, 'bountyRate': 1.0, 'deadline': 30.0}
@@ -35,13 +36,13 @@ class BountyHunter(object):
 
         ## start up the listener thread for new tasks
         try:
-            thread.start_new_thread(bondsmanListener,())
+            thread.start_new_thread(self.bondsmanListener,())
         except:
            print "Error: unable to start thread"
 
         # hunt bounties forever....
         while True:
-            task = getTask()
+            task = self.getTask()
             task['handler'].doTask()
 
     def bondsmanListener(self):
@@ -56,7 +57,7 @@ class BountyHunter(object):
             7 uint32 outputPort
         '''
         bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        bondSock.bind(('0.0.0.0', BONDSMANPORT))
+        bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
         while True:
             print 'hi'
             ## addr is ('ipaddress', port)
