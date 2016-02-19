@@ -98,6 +98,11 @@ def bondsmanListener():
         ## and add it to the task list
 
 
+
+def goAfterBounty():
+
+
+
 prevFor = 0.0
 prevAng = 0.0
 
