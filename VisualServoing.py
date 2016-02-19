@@ -21,11 +21,15 @@ class VisualServoing(object):
     def __init__(self, sourceIP, sourcePort, destIP, destPort):
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((sourceIP, SourcePort))
+        self.sock.bind((sourceIP, sourcePort))
         self.destIP = destIP
         self.destPort = destPort
         self.prevFor = 0.0
         self.prevAng = 0.0
+
+    def doTask(self):
+        self.visualServoingAction()
+
 
     def findBlob(self, frame):
 

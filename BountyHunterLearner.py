@@ -31,5 +31,15 @@ class BountyHunterLearner(object):
     def pickTask(self, tasks):
         if self.epsilonChooseRandomTask > random.random():
             # then pick a random task
+            for k, v in tasks:
+                if v['name'] == 'visualServoing':
+                    return v
+            return tasks['DoNothing']
         else:
             # pick a task regularly
+            #for k,v in tasks:
+            for k, v in tasks:
+                if v['name'] == 'visualServoing':
+                    return v
+            return tasks['DoNothing']
+
