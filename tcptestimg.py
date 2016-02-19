@@ -120,7 +120,6 @@ def visualservo(blobx, bloby) :
 
 
 
-
 while True:
     image = processSocketImage()
     ## if goAfterBounty() then

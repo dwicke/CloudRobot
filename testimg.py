@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import socket
 import zlib
+import thread
+
 
 vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,37 +15,7 @@ HEIGHT = 240
 WIDTH = 320
 CHANNELS = 3
 MSGLEN = WIDTH*HEIGHT*CHANNELS
-
-def myreceive():
-        data, addr = sock.recvfrom(1024)
-        return zlib.decompress(data)
-        # binaryImageString = zlib.decompress(''.join(map(str, data)))
-        # colorData = []
-        # for c in binaryImageString:
-        #     if c == "1":
-        #         colorData.append(255)
-        #         colorData.append(255)
-        #         colorData.append(255)
-        #     else:
-        #         colorData.append(0)
-        #         colorData.append(0)
-        #         colorData.append(0)
-        # return colorData
-
-        # bgrImageString = []
-        # for p in binaryImageString:
-        #     if p == "1":
-        #         bgrImageString.append
-        # chunks = []
-        # bytes_recd = 0
-        # while bytes_recd < MSGLEN:
-        #     chunk = conn.recv(min(MSGLEN - bytes_recd, 2048))
-        #     if chunk == '':
-        #         raise RuntimeError("socket connection broken")
-        #     chunks.append(chunk)
-        #     bytes_recd = bytes_recd + len(chunk)
-        #     #print 'bytes read "%d" ' % (bytes_recd)
-        # return ''.join(chunks)
+BONDSMANPORT = 14000
 
 def findBlob(frame):
 
@@ -52,13 +24,7 @@ def findBlob(frame):
 
     thresh = cv2.erode(frame, None, iterations=2)
     thresh = cv2.dilate(thresh, None, iterations=2)
-    #thresh = cv2.inRange(hsv,np.array((0, 80, 80)), np.array((20, 255, 255)))
-    #thresh = cv2.inRange(hsv,np.array((15, 155, 255)), np.array((15, 255, 255)))
-    #thresh = cv2.inRange(hsv,np.array((255, 128, 0)), np.array((255, 180, 100)))
     thresh2 = thresh.copy()
-
-
-
     # find contours in the threshold image
     contours,hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
@@ -86,9 +52,9 @@ def findBlob(frame):
 
 def processSocketImage() :
     #print 'Connected to server'
+    data, addr = sock.recvfrom(1024)
+    rcvimg = zlib.decompress(data)
 
-    rcvimg = myreceive()
-    print len(rcvimg)
     image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH)
 
     return image
@@ -115,13 +81,33 @@ def visualservo(blobx, bloby) :
     return forV, angV
 
 
+def bondsmanListener():
+    bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    bondSock.bind(('0.0.0.0', BONDSMANPORT))
+    while True:
+        print 'hi'
+        data, addr = bondSock.recvfrom(60000)
+        ## check if success or task
+
+        ## if success then learn
+
+        ## if task then add it to the learning function ComplexP
+        ## and add it to the task list
+
+
 prevFor = 0.0
 prevAng = 0.0
+
+try:
+    thread.start_new_thread( bondsmanListener )
+except:
+   print "Error: unable to start thread"
+
 while True:
+
+    ## if goAfterBounty():
+
     image = processSocketImage()
-    ## if goAfterBounty() then
-
-
     thresh, image, cx, cy = findBlob(image)
     print 'x = "%d" y = "%d"' % (cx, cy)
     cv2.imshow("Image", image)
