@@ -9,6 +9,7 @@ from BountyHunterLearner import BountyHunterLearner
 ## http://stackoverflow.com/questions/547829/how-to-dynamically-load-a-python-class
 
 
+
 class DoNothing(object):
     def __init__(self):
         return ()
@@ -93,4 +94,5 @@ class BountyHunter(object):
         return taskRunner
 
 
-
+# do tasks...
+bme = BountyHunter()
