@@ -11,21 +11,22 @@ import sys
 class VisualServoing(object):
 
 
-    HEIGHT = 240
-    WIDTH = 320
-    CHANNELS = 3
-    MSGLEN = WIDTH*HEIGHT*CHANNELS
-    BONDSMANPORT = 14000
+
 
 
     def __init__(self, sourceIP, sourcePort, destIP, destPort):
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((sourceIP, sourcePort))
+        self.sock.bind(('0.0.0.0', sourcePort))
         self.destIP = destIP
         self.destPort = destPort
         self.prevFor = 0.0
         self.prevAng = 0.0
+        self.HEIGHT = 240
+        self.WIDTH = 320
+        self.CHANNELS = 3
+        self.MSGLEN = self.WIDTH*self.HEIGHT*self.CHANNELS
+        self.BONDSMANPORT = 14000
 
     def doTask(self):
         self.visualServoingAction()
@@ -66,15 +67,19 @@ class VisualServoing(object):
 
     def processSocketImage(self) :
         #print 'Connected to server'
-        data, addr = self.sock.recvfrom(1024)
+        data, addr = self.sock.recvfrom(2048)
         # first decompress the data and split on newline
-        decompData = zlib.decompress(data).split( )
+        try:
+            decompData = zlib.decompress(data).split( )
+        except Exception as details:
+            print 'could not decompress image stuffs error: %s' % (details)
+            return None
         self.imageID = decompData[0]
         self.imageTimestamp = decompData[1]
         rcvimg = decompData[2]
+        print str(self.imageID) + ' ' + str(self.imageTimestamp)
 
-
-        image = np.array(bytearray(rcvimg), dtype="uint8").reshape(HEIGHT,WIDTH)
+        image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
 
         return image
 
@@ -85,14 +90,14 @@ class VisualServoing(object):
         if blobx == -1 :
             return forV, angV
 
-        centerX = WIDTH / 2
+        centerX = self.WIDTH / 2
         if blobx < (centerX - 10) :
             angV = 0.10
             print "setting turn left velocity"
         elif blobx > (centerX + 10) :
             angV = -0.10
             print "setting turn right velocity"
-        elif bloby < HEIGHT - 15 :
+        elif bloby < self.HEIGHT - 15 :
             forV = 0.1
             print "setting forward velocity"
 
@@ -103,15 +108,17 @@ class VisualServoing(object):
 
 
     def visualServoingAction(self):
-        image = processSocketImage()
-        thresh, image, cx, cy = findBlob(image)
+        image = self.processSocketImage()
+        if image == None: # then I got a bad packet. must decide what to do now
+            return None
+        thresh, image, cx, cy = self.findBlob(image)
         print 'x = "%d" y = "%d"' % (cx, cy)
         cv2.imshow("Image", image)
         cv2.imshow("thresh", thresh)
         cv2.waitKey(1)
         # ## units are mm/s degrees/s
-        forwardVelocity, angularVelocity = visualservo(cx, cy)
-        data = '%f, %f, %f, %f' % (forwardVelocity, angularVelocity, self.imageID, self.imageTimestamp)
+        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+        data = '%f, %f, %d, %f' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp))
         if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
             self.prevFor = forwardVelocity
             self.prevAng = angularVelocity

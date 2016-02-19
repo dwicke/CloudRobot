@@ -71,12 +71,12 @@ class BountyHunter(object):
                 print listData[1]
                 ## if task then add it to the learning function?
                 ## and add it to the task list
-                if listData[1] + '-' + addr[0] not in taskSet:
+                if listData[1] + '-' + addr[0] not in self.taskSet:
                     # so if I can actually do the task then add the task.
-                    if listData[1] in taskHandlers:
-                        #self.taskLock.acquire()
-                        taskSet[listData[1] + '-' + addr[0]] = {'handler':taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2]}
-                        #self.taskLock.release()
+                    if listData[1] in self.taskHandlers:
+                        self.taskLock.acquire()
+                        self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2]}
+                        self.taskLock.release()
             else:
                 print listData[1]
                 ## if success packet then learn!!
@@ -91,9 +91,9 @@ class BountyHunter(object):
         ## in the future will querry the learning algorithm
         ## and the curent tasks and the tasks will have a
         ## function associated with them such as visualServoingAction
-        #self.taskLock.acquire()
+        self.taskLock.acquire()
         taskRunner = self.bountyLearner.getTask(self.taskSet)
-        #self.taskLock.release()
+        self.taskLock.release()
         return taskRunner
 
 
