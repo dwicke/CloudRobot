@@ -6,13 +6,13 @@ class QTable(object):
         self.oneMinusAlpha = 1 - alpha
         self.gamma = gamma
         self.oneMinusGamma = 1 - gamma
-        self.defaultValue
+        self.defaultValue = defaultValue
         self.qtable = {}
 
     def update(self, state, action, reward):
-        if state not in self.qtable
+        if state not in self.qtable:
             self.qtable[state] = {}
-        if action not in self.qtable[state]
+        if action not in self.qtable[state]:
             self.qtable[state][action] = self.defaultValue
 
         self.qtable[state][action] = self.oneMinusAlpha * self.qtable[state][action] + self.alpha * reward;

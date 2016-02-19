@@ -28,17 +28,17 @@ class BountyHunterLearner(object):
 
     ## tasks is a list of tasks [{'name': 'task_name', 'cur_bounty': <val>, }, ...]
     ## return task name i'm picking
-    def pickTask(self, tasks):
+    def getTask(self, tasks):
         if self.epsilonChooseRandomTask > random.random():
             # then pick a random task
-            for k, v in tasks:
+            for k, v in tasks.iteritems():
                 if v['name'] == 'visualServoing':
                     return v
             return tasks['DoNothing']
         else:
             # pick a task regularly
             #for k,v in tasks:
-            for k, v in tasks:
+            for k, v in tasks.iteritems():
                 if v['name'] == 'visualServoing':
                     return v
             return tasks['DoNothing']

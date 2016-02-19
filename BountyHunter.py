@@ -3,8 +3,10 @@
 import socket
 import thread
 import json
+import threading
 from VisualServoing import VisualServoing
 from BountyHunterLearner import BountyHunterLearner
+
 ## in the future can dynamically load new task handlers
 ## http://stackoverflow.com/questions/547829/how-to-dynamically-load-a-python-class
 
@@ -12,17 +14,17 @@ from BountyHunterLearner import BountyHunterLearner
 
 class DoNothing(object):
     def __init__(self):
-        return ()
+        return None
     def doTask(self):
-        return ()
+        return None
 
 class BountyHunter(object):
 
     def __init__(self):
         self.BONDSMANPORT = 14000
-        self.taskLock = Lock()
+        self.taskLock = threading.Lock()
         self.taskSet = {}
-        self.taskSet['DoNothing'] = {'handler':DoNothing, 'name': 'DoNothing', 'initBounty': 100.0, 'bountyRate': 1.0, 'deadline': 30.0}
+        self.taskSet['DoNothing'] = {'handler':DoNothing(), 'name': 'DoNothing', 'initBounty': 100.0, 'bountyRate': 1.0, 'deadline': 30.0}
 
         ## in the future the task handlers will be dynamically
         ## loaded and refreshed to  make sure the latest and
@@ -72,9 +74,9 @@ class BountyHunter(object):
                 if listData[1] + '-' + addr[0] not in taskSet:
                     # so if I can actually do the task then add the task.
                     if listData[1] in taskHandlers:
-                        self.taskLock.aquire()
+                        #self.taskLock.acquire()
                         taskSet[listData[1] + '-' + addr[0]] = {'handler':taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2]}
-                        self.taskLock.release()
+                        #self.taskLock.release()
             else:
                 print listData[1]
                 ## if success packet then learn!!
@@ -89,9 +91,9 @@ class BountyHunter(object):
         ## in the future will querry the learning algorithm
         ## and the curent tasks and the tasks will have a
         ## function associated with them such as visualServoingAction
-        self.taskLock.aquire()
+        #self.taskLock.acquire()
         taskRunner = self.bountyLearner.getTask(self.taskSet)
-        self.taskLock.release()
+        #self.taskLock.release()
         return taskRunner
 
 
