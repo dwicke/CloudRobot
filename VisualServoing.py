@@ -1,4 +1,5 @@
-#from cv2.cv import *
+#!/usr/bin/env python
+
 import cv2
 import numpy as np
 import socket
@@ -6,7 +7,6 @@ import zlib
 import thread
 import json
 import sys
-
 
 class VisualServoing(object):
 
@@ -112,41 +112,3 @@ class VisualServoing(object):
             self.prevFor = forwardVelocity
             self.prevAng = angularVelocity
             self.vel_socket.sendto(data, (self.destIP, self.destPort))
-
-
-
-
-
-
-def bondsmanListener():
-    bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    bondSock.bind(('0.0.0.0', BONDSMANPORT))
-    while True:
-        print 'hi'
-        data, addr = bondSock.recvfrom(60000)
-        ## check if success or task
-        print data
-        listData = json.loads(data)
-        print listData[0]
-        ## if success then learn
-
-        ## if task then add it to the learning function ComplexP
-        ## and add it to the task list
-
-
-
-def getTask():
-    ## in the future will querry the learning algorithm
-    ## and the curent tasks and the tasks will have a
-    ## function associated with them such as visualServoingAction
-    return visualServoingAction
-
-try:
-    thread.start_new_thread(bondsmanListener,())
-except:
-   print "Error: unable to start thread"
-
-while True:
-    task = getTask()
-    #task()
-

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 class QTable(object):
     def __init__(self, alpha, gamma, defaultValue):
         self.alpha = alpha

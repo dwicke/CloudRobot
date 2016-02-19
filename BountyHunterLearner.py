@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import random
+from QTable import QTable
 '''
     This class can be used as both Complex(P,R) and Simple(P,R) depending on
     how its used.
