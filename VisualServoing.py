@@ -14,7 +14,7 @@ class VisualServoing(object):
 
 
 
-    def __init__(self, sourceIP, sourcePort, destIP, destPort):
+    def __init__(self, sourceIP, sourcePort, destIP, destPort, taskName):
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(('0.0.0.0', sourcePort))
@@ -27,6 +27,7 @@ class VisualServoing(object):
         self.CHANNELS = 3
         self.MSGLEN = self.WIDTH*self.HEIGHT*self.CHANNELS
         self.BONDSMANPORT = 14000
+        self.taskName = taskName
 
     def doTask(self):
         self.visualServoingAction()
@@ -118,7 +119,7 @@ class VisualServoing(object):
         cv2.waitKey(1)
         # ## units are mm/s degrees/s
         forwardVelocity, angularVelocity = self.visualservo(cx, cy)
-        data = '%f, %f, %d, %f' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp))
+        data = '%f, %f, %d, %f, %s' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp), self.taskName)
         if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
             self.prevFor = forwardVelocity
             self.prevAng = angularVelocity
