@@ -31,6 +31,7 @@ class ConnectionManager(object):
         return sock.accept()
 
     def addClient(self, ip, port):
+        self.isServer = False
         if self.connType == 'tcp':
             self.clientsock.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
             self.clientsock[len(self.clientsock) -1].connect((ip, port))
@@ -58,6 +59,7 @@ class ConnectionManager(object):
                 print "sent message:", data
         elif self.isServer == False and self.connType == 'udp':
             for sockinfo in self.clientsock:
+                print 'Sending %s to %s :%d' %(data, sockinfo[0], sockinfo[1])
                 sockinfo[2].sendto(data, (sockinfo[0], sockinfo[1]))
         return True
 
@@ -68,7 +70,7 @@ class ConnectionManager(object):
         may be empty if nothing
         '''
         recvData = {}
-        ready_socks,_,_ = select.select(self.clientsock, [], [])
+        ready_socks,_,_ = select.select([self.server_socket], [], [])
         for sock in ready_socks:
             data, addr = sock.recvfrom(4096) # This is will not block
             recvData[addr] = data

@@ -15,9 +15,13 @@ class VisualServoing(object):
 
 
     def __init__(self, sourceIP, sourcePort, destIP, destPort, taskName):
-        self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(('0.0.0.0', sourcePort))
+
+        ## image conn
+        self.sock, self.sockAddr = self.tcpConnection('', sourcePort)
+        ## velocity conn
+        self.vel_socket, self.velAddr = self.tcpConnection('', destPort)
+
+
         self.destIP = destIP
         self.destPort = destPort
         self.prevFor = 0.0
@@ -26,8 +30,13 @@ class VisualServoing(object):
         self.WIDTH = 320
         self.CHANNELS = 3
         self.MSGLEN = self.WIDTH*self.HEIGHT*self.CHANNELS
-        self.BONDSMANPORT = 14000
         self.taskName = taskName
+
+    def tcpConnection(self, host, port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind((host, port))
+        sock.listen(1)
+        return sock.accept()
 
     def doTask(self):
         self.visualServoingAction()

@@ -6,6 +6,7 @@ import json
 import threading
 from VisualServoing import VisualServoing
 from BountyHunterLearner import BountyHunterLearner
+from ConnectionManager import ConnectionManager
 
 ## in the future can dynamically load new task handlers
 ## http://stackoverflow.com/questions/547829/how-to-dynamically-load-a-python-class
@@ -58,12 +59,16 @@ class BountyHunter(object):
             6 uint32 inputPort
             7 uint32 outputPort
         '''
-        bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
+        bondSock = ConnectionManager('tcp')
+        bondSock.buildServer(self.BONDSMANPORT)
+        # bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
         while True:
             print 'hi'
             ## addr is ('ipaddress', port)
             data, addr = bondSock.recvfrom(32768)
+            recvData = bondSock.recv(32768)
+            if
             ## check if success or task
             print data
             listData = json.loads(data)
