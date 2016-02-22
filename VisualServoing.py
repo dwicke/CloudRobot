@@ -15,11 +15,14 @@ class VisualServoing(object):
 
 
     def __init__(self, sourceIP, sourcePort, destIP, destPort, taskName):
+
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.vel_socket.bind(('0.0.0.0', destPort))
+        self.destIP, self.destPort = self.vel_socket.recv()
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(('0.0.0.0', sourcePort))
-        self.destIP = destIP
-        self.destPort = destPort
+
         self.prevFor = 0.0
         self.prevAng = 0.0
         self.HEIGHT = 240

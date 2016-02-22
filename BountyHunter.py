@@ -59,16 +59,15 @@ class BountyHunter(object):
             6 uint32 inputPort
             7 uint32 outputPort
         '''
-        bondSock = ConnectionManager('tcp')
-        bondSock.buildServer(self.BONDSMANPORT)
-        # bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
+
+        bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
         while True:
             print 'hi'
             ## addr is ('ipaddress', port)
-            data, addr = bondSock.recvfrom(32768)
             recvData = bondSock.recv(32768)
-            if
+            data = recvData[0][0]
+            addr = recvData[0][1]
             ## check if success or task
             print data
             listData = json.loads(data)
