@@ -106,7 +106,7 @@ class VisualServoing(object):
 
         image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
 
-        # return image
+        return image
 
     ## units are mm/s degrees/s
     def visualservo(self, blobx, bloby) :
