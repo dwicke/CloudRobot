@@ -83,11 +83,19 @@ class VisualServoing(object):
         # first decompress the data and split on newline
         print 'I got data! size from %s is: %d' % (addr[0], len(data))
         try:
-            decompData = zlib.decompress(data).split( )
+            decompData = zlib.decompress(data)
+            loc = decompData.find(',')
+            self.imageID = decompData[:loc]
+            print 'image id %s' % (self.imageID)
+            decompData = decmpData[loc+1:]
+            loc = decompData.find(',')
+            self.imageTimestamp = decompData[:loc]
+            print 'image timestamp: %s' % (self.imageTimestamp)
+            rcvimg = decompData[loc+1:]
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
             return None
-        print decompData
+
         return None
         # self.imageID = decompData[0]
         # self.imageTimestamp = decompData[1]
