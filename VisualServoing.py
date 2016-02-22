@@ -16,13 +16,19 @@ class VisualServoing(object):
 
     def __init__(self, sourceIP, sourcePort, destIP, destPort, taskName):
 
+        print "Starting"
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.vel_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         self.vel_socket.bind(('0.0.0.0', destPort))
         data, self.robotClient = self.vel_socket.recvfrom(2048)
 
+
         print "visual servoing got from %s:%d robot: %s" % (self.robotClient[0], self.robotClient[1], data)
+        self.vel_socket.sendto("connected", self.robotClient)
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('0.0.0.0', sourcePort))
 
         self.prevFor = 0.0

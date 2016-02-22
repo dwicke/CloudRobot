@@ -61,6 +61,7 @@ class BountyHunter(object):
         '''
 
         bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        bondSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
         while True:
             print 'hi'
