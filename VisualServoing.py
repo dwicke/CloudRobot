@@ -81,6 +81,7 @@ class VisualServoing(object):
         #print 'Connected to server'
         data, addr = self.sock.recvfrom(2048)
         # first decompress the data and split on newline
+        print 'I got data! size from %s is: %d' % (addr[0], len(data))
         try:
             decompData = zlib.decompress(data).split( )
         except Exception as details:
