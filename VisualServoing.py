@@ -82,9 +82,10 @@ class VisualServoing(object):
         data, addr = self.sock.recvfrom(4096)
         # first decompress the data and split on newline
         print 'I got data! size from %s is: %d' % (addr[0], len(data))
-        print 'the data %s' % (data)
+
         try:
             decompData = zlib.decompress(data)
+            print 'the data %s' % (decompData)
             loc = decompData.find(',')
             self.imageID = decompData[:loc]
             print 'image id %s' % (self.imageID)
