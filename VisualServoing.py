@@ -81,7 +81,7 @@ class VisualServoing(object):
         #print 'Connected to server'
         data, addr = self.sock.recvfrom(4096)
         # first decompress the data and split on newline
-        print 'I got data! size from %s is: %d' % (addr[0], len(data))
+        #print 'I got data! size from %s is: %d' % (addr[0], len(data))
         rcvimg = None
         try:
             decompData = zlib.decompress(data)
