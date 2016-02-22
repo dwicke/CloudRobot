@@ -82,7 +82,7 @@ class VisualServoing(object):
         data, addr = self.sock.recvfrom(4096)
         # first decompress the data and split on newline
         print 'I got data! size from %s is: %d' % (addr[0], len(data))
-
+        rcvimg = None
         try:
             decompData = zlib.decompress(data)
             print 'the data %s' % (decompData)
@@ -98,13 +98,13 @@ class VisualServoing(object):
             print 'could not decompress image stuffs error: %s' % (details)
             return None
 
-        return None
+
         # self.imageID = decompData[0]
         # self.imageTimestamp = decompData[1]
         # rcvimg = decompData[2]
         # print str(self.imageID) + ' ' + str(self.imageTimestamp)
 
-        # image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
+         image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
 
         # return image
 
