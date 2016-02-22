@@ -18,7 +18,7 @@ class QTable(object):
         self.qtable[state][action] = self.oneMinusAlpha * self.qtable[state][action] + self.alpha * reward;
 
     def getQValue(self, state, action):
-        if state not in self.qtable:
+        if state not in self.qtable.keys():
             self.qtable[state] = {}
         if action not in self.qtable[state]:
             self.qtable[state][action] = self.defaultValue
