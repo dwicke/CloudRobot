@@ -117,9 +117,9 @@ class VisualServoing(object):
             return None
         thresh, image, cx, cy = self.findBlob(image)
         print 'x = "%d" y = "%d"' % (cx, cy)
-        cv2.imshow("Image", image)
-        cv2.imshow("thresh", thresh)
-        cv2.waitKey(1)
+        #cv2.imshow("Image", image)
+        #cv2.imshow("thresh", thresh)
+        #cv2.waitKey(1)
         # ## units are mm/s degrees/s
         forwardVelocity, angularVelocity = self.visualservo(cx, cy)
         data = '%f, %f, %d, %f, %s' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp), self.taskName)
