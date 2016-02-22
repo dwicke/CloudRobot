@@ -79,15 +79,16 @@ class VisualServoing(object):
 
     def processSocketImage(self) :
         #print 'Connected to server'
-        data, addr = self.sock.recvfrom(2048)
+        data, addr = self.sock.recvfrom(4096)
         # first decompress the data and split on newline
         print 'I got data! size from %s is: %d' % (addr[0], len(data))
+        print 'the data %s' % (data)
         try:
             decompData = zlib.decompress(data)
             loc = decompData.find(',')
             self.imageID = decompData[:loc]
             print 'image id %s' % (self.imageID)
-            decompData = decmpData[loc+1:]
+            decompData = decompData[loc+1:]
             loc = decompData.find(',')
             self.imageTimestamp = decompData[:loc]
             print 'image timestamp: %s' % (self.imageTimestamp)
