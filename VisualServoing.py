@@ -104,7 +104,7 @@ class VisualServoing(object):
         # rcvimg = decompData[2]
         # print str(self.imageID) + ' ' + str(self.imageTimestamp)
 
-         image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
+        image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
 
         # return image
 
