@@ -65,9 +65,7 @@ class BountyHunter(object):
         while True:
             print 'hi'
             ## addr is ('ipaddress', port)
-            recvData = bondSock.recv(32768)
-            data = recvData[0][0]
-            addr = recvData[0][1]
+            data, addr = bondSock.recv(32768)
             ## check if success or task
             print data
             listData = json.loads(data)
