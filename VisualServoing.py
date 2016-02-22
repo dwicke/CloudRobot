@@ -18,7 +18,9 @@ class VisualServoing(object):
 
         self.vel_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.vel_socket.bind(('0.0.0.0', destPort))
-        self.destIP, self.destPort = self.vel_socket.recv()
+        data, self.robotClient = self.vel_socket.recvfrom(2048)
+
+        print "visual servoing got from %s:%d robot: %s" % (self.robotClient[0], self.robotClient[1], data)
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind(('0.0.0.0', sourcePort))
@@ -126,4 +128,4 @@ class VisualServoing(object):
         if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
             self.prevFor = forwardVelocity
             self.prevAng = angularVelocity
-            self.vel_socket.sendto(data, (self.destIP, self.destPort))
+            self.vel_socket.sendto(data, self.robotClient)
