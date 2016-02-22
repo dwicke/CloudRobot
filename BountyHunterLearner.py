@@ -32,7 +32,9 @@ class BountyHunterLearner(object):
     def getTask(self, tasks):
         if self.epsilonChooseRandomTask > random.random():
             # then pick a random task
-            return tasks[random.choice(tasks.keys())]
+            taskName = random.choice(tasks.keys())
+            print 'Picked random task %s' % (taskName)
+            return tasks[taskName]
             # for k, v in tasks.iteritems():
             #     if v['name'] == 'visualServoing':
             #         return v
@@ -43,12 +45,13 @@ class BountyHunterLearner(object):
             bestTask = None
             maxI = -1
             for k, v in tasks.iteritems():
-                I = v['initBounty']/self.TTable.getQValue(v, 0)*self.PTable.getQValue(v, 0)
+                I = (v['initBounty']/self.TTable.getQValue(v, 0))*self.PTable.getQValue(v, 0)
                 if I > maxI:
                     maxI = I
                     bestTask = v
             #     if v['name'] == 'visualServoing':
             #         return v
             # return tasks['DoNothing']
+            print 'Picked specific task %s with I = %d' % (bestTask['name'], maxI)
             return bestTask
 

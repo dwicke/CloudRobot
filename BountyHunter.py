@@ -85,11 +85,9 @@ class BountyHunter(object):
                 print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
                 if listData[3] == self.myIP:
                     ## Then I won!!
-                    self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), [], 1):
-                ## if success packet then learn!!
-                ## first check if i did do the task
-               # if listData[1] + '-' + addr[0] in taskSet:
-                 #   if taskSet[listData[1] + '-' + addr[0]]['handler'].
+                    self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), 0, 1)
+                else:
+                    self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), 0, 0)
 
 
 
