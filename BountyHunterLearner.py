@@ -17,11 +17,12 @@ class BountyHunterLearner(object):
     def learn(self, task, roundtriptime, agentsWorking, reward):
         if reward == 1:
             self.TTable.update(task, 0, roundtriptime)
-            for agent in agentsWorking:
-                self.PTable.update(task, agent, reward)
+            #for agent in agentsWorking:
+            self.PTable.update(task, 0, reward)
 
         else:
-            self.PTable.update(task, agent, reward)
+            #self.PTable.update(task, agent, reward)
+            self.PTable.update(task, 0, reward)
 
         if self.hasOneUpdate == True:
             self.PTable.oneupdate()
@@ -31,15 +32,23 @@ class BountyHunterLearner(object):
     def getTask(self, tasks):
         if self.epsilonChooseRandomTask > random.random():
             # then pick a random task
-            for k, v in tasks.iteritems():
-                if v['name'] == 'visualServoing':
-                    return v
-            return tasks['DoNothing']
+            return tasks[random.choice(tasks.keys())]
+            # for k, v in tasks.iteritems():
+            #     if v['name'] == 'visualServoing':
+            #         return v
+            # return tasks['DoNothing']
         else:
             # pick a task regularly
             #for k,v in tasks:
+            bestTask = None
+            maxI = -1
             for k, v in tasks.iteritems():
-                if v['name'] == 'visualServoing':
-                    return v
-            return tasks['DoNothing']
+                I = v['initBounty']/self.TTable.getQValue(v, 0)*self.PTable.getQValue(v, 0)
+                if I > maxI:
+                    maxI = I
+                    bestTask = v
+            #     if v['name'] == 'visualServoing':
+            #         return v
+            # return tasks['DoNothing']
+            return bestTask
 

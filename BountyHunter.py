@@ -36,6 +36,7 @@ class BountyHunter(object):
         ## create the learner
         #alphaT, alphaP, oneUpdateGamma, hasOneUpdate, epsilonChooseRandomTask
         self.bountyLearner = BountyHunterLearner(0.1,0.2,0.001,True, 0.002)
+        self.myIP = str([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0])
 
         ## start up the listener thread for new tasks
         try:
@@ -81,7 +82,10 @@ class BountyHunter(object):
                         self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7], listData[1]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2]}
                         self.taskLock.release()
             else:
-                print listData[1]
+                print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
+                if listData[3] == self.myIP:
+                    ## Then I won!!
+                    self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), [], 1):
                 ## if success packet then learn!!
                 ## first check if i did do the task
                # if listData[1] + '-' + addr[0] in taskSet:

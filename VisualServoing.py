@@ -85,14 +85,14 @@ class VisualServoing(object):
         rcvimg = None
         try:
             decompData = zlib.decompress(data)
-            print 'the data %s' % (decompData)
+            #print 'the data %s' % (decompData)
             loc = decompData.find(',')
             self.imageID = decompData[:loc]
-            print 'image id %s' % (self.imageID)
+            #print 'image id %s' % (self.imageID)
             decompData = decompData[loc+1:]
             loc = decompData.find(',')
             self.imageTimestamp = decompData[:loc]
-            print 'image timestamp: %s' % (self.imageTimestamp)
+            #print 'image timestamp: %s' % (self.imageTimestamp)
             rcvimg = decompData[loc+1:]
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
@@ -137,7 +137,7 @@ class VisualServoing(object):
         if image == None: # then I got a bad packet. must decide what to do now
             return None
         thresh, image, cx, cy = self.findBlob(image)
-        print 'x = "%d" y = "%d"' % (cx, cy)
+        #print 'x = "%d" y = "%d"' % (cx, cy)
         #cv2.imshow("Image", image)
         #cv2.imshow("thresh", thresh)
         #cv2.waitKey(1)
