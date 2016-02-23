@@ -11,6 +11,8 @@ class BountyHunterLearner(object):
         self.PTable = QTable(alphaP, oneUpdateGamma, 1)
         self.hasOneUpdate = hasOneUpdate
         self.epsilonChooseRandomTask = epsilonChooseRandomTask
+        self.lastTask = ''
+        self.lastI = 0
 
     ## need the time it took to complete the task, who else worked
     ## on the same task, and the reward (1 if I won 0 otherwise)
@@ -25,7 +27,7 @@ class BountyHunterLearner(object):
             self.PTable.update(task, 0, reward)
 
         if self.hasOneUpdate == True:
-            self.PTable.oneupdate()
+            self.PTable.oneUpdate()
 
     ## tasks is a list of tasks [{'name': 'task_name', 'cur_bounty': <val>, }, ...]
     ## return task name i'm picking
@@ -34,11 +36,8 @@ class BountyHunterLearner(object):
             # then pick a random task
             taskName = random.choice(tasks.keys())
             print 'Picked random task %s' % (taskName)
+            lastTask = taskName
             return tasks[taskName]
-            # for k, v in tasks.iteritems():
-            #     if v['name'] == 'visualServoing':
-            #         return v
-            # return tasks['DoNothing']
         else:
             # pick a task regularly
             #for k,v in tasks:
@@ -49,9 +48,10 @@ class BountyHunterLearner(object):
                 if I > maxI:
                     maxI = I
                     bestTask = v
-            #     if v['name'] == 'visualServoing':
-            #         return v
-            # return tasks['DoNothing']
-            print 'Picked specific task %s with I = %d' % (bestTask['name'], maxI)
+
+            if self.lastTask != bestTask['name'] or maxI != self.lastI:
+                self.lastTask = bestTask['name']
+                self.lastI = maxI
+                print 'Picked specific task %s with I = %d' % (bestTask['name'], maxI)
             return bestTask
 

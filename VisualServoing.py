@@ -118,15 +118,15 @@ class VisualServoing(object):
         centerX = self.WIDTH / 2
         if blobx < (centerX - 10) :
             angV = 0.10
-            print "setting turn left velocity"
+            #print "setting turn left velocity"
         elif blobx > (centerX + 10) :
             angV = -0.10
-            print "setting turn right velocity"
+            #print "setting turn right velocity"
         elif bloby < self.HEIGHT - 15 :
             forV = 0.1
-            print "setting forward velocity"
+            #print "setting forward velocity"
 
-        print '"%f"  "%f"' % (forV, angV)
+        #print '"%f"  "%f"' % (forV, angV)
         return forV, angV
 
 
@@ -134,8 +134,8 @@ class VisualServoing(object):
 
     def visualServoingAction(self):
         image = self.processSocketImage()
-        if image == None: # then I got a bad packet. must decide what to do now
-            return None
+        #if image == None: # then I got a bad packet. must decide what to do now
+         #   return None
         thresh, image, cx, cy = self.findBlob(image)
         #print 'x = "%d" y = "%d"' % (cx, cy)
         #cv2.imshow("Image", image)
@@ -147,4 +147,5 @@ class VisualServoing(object):
         if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
             self.prevFor = forwardVelocity
             self.prevAng = angularVelocity
+            print 'Sending %s to the robot' % (data)
             self.vel_socket.sendto(data, self.robotClient)
