@@ -71,7 +71,7 @@ class BountyHunter(object):
             if listData[1] + '-' + addr[0] not in self.taskSet:
                 # so if I can actually do the task then add the task.
                 if listData[1] in self.taskHandlers:
-                    self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7], listData[1]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2], 'currentBounty' = listData[3]}
+                    self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7], listData[1]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2], 'currentBounty': listData[3]}
         else:
             print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
             totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
