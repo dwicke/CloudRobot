@@ -21,9 +21,8 @@ class BountyHunter(object):
 
     def __init__(self):
         self.BONDSMANPORT = 14000
-        #self.taskLock = threading.Lock()
         self.taskSet = {}
-        self.taskSet['DoNothing'] = {'handler':DoNothing(), 'name': 'DoNothing', 'initBounty': 10.0, 'bountyRate': 1.0, 'deadline': 30.0}
+        self.taskSet['DoNothing'] = {'handler':DoNothing(), 'name': 'DoNothing', 'initBounty': 0.65, 'bountyRate': 0.0, 'deadline': 30.0}
 
         ## in the future the task handlers will be dynamically
         ## loaded and refreshed to  make sure the latest and
@@ -40,13 +39,6 @@ class BountyHunter(object):
         self.bondSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
 
-        ## start up the listener thread for new tasks
-        # try:
-        #     thread.start_new_thread(self.bondsmanListener,())
-        # except:
-        #    print "Error: unable to start thread"
-
-        # hunt bounties forever....
         while True:
             self.bountyLearner.getTask(self.taskSet)['handler'].doTask()
             self.bondsmanRecv()
@@ -77,16 +69,18 @@ class BountyHunter(object):
             if listData[1] + '-' + addr[0] not in self.taskSet:
                 # so if I can actually do the task then add the task.
                 if listData[1] in self.taskHandlers:
-                    #self.taskLock.acquire()
                     self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7], listData[1]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2]}
-                    #self.taskLock.release()
+                elif listData[1] + '-' + addr[0] in self.taskSet:
+                    # then update the changed value.
+                    self.taskSet[listData[1] + '-' + addr[0]]['initBounty'] = listData[3]
         else:
             print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
+            totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
             if listData[3] == self.myIP:
                 ## Then I won!!
-                self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), 0, 1)
+                self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 1)
             else:
-                self.bountyLearner.learn(listData[1] + '-' + addr[0], float(listData[4]), 0, 0)
+                self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 0)
 
 
 # do tasks...
