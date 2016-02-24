@@ -41,7 +41,7 @@ class BountyHunter(object):
 
         while True:
             self.curtask = self.bountyLearner.getTask(self.taskSet)
-            self.curtask['currentBounty'] += 1
+            self.curtask['currentBounty'] += self.curtask['bountyRate']
             self.curtask['handler'].doTask()
             self.bondsmanRecv()
 
