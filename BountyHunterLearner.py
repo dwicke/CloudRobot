@@ -6,9 +6,9 @@ from QTable import QTable
     how its used.
 '''
 class BountyHunterLearner(object):
-    def __init__(self, alphaT, alphaP, oneUpdateGamma, hasOneUpdate, epsilonChooseRandomTask):
-        self.TTable = QTable(alphaT, oneUpdateGamma, 1)
-        self.PTable = QTable(alphaP, oneUpdateGamma, 1)
+    def __init__(self, alphaT, alphaP, oneUpdateGamma, hasOneUpdate, epsilonChooseRandomTask, tInit = 1, pInit = 1):
+        self.TTable = QTable(alphaT, oneUpdateGamma, tInit)
+        self.PTable = QTable(alphaP, oneUpdateGamma, pInit)
         self.hasOneUpdate = hasOneUpdate
         self.epsilonChooseRandomTask = epsilonChooseRandomTask
         self.lastTask = ''
