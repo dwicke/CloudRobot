@@ -43,7 +43,7 @@ class BountyHunter(object):
             self.curtask = self.bountyLearner.getTask(self.taskSet)
             print 'current bounty rate for task %s is %f' % (self.curtask['name'], self.curtask['bountyRate'])
             for task in self.taskSet.values():
-                self.task['currentBounty'] += self.task['bountyRate']
+                task['currentBounty'] += task['bountyRate']
             self.curtask['handler'].doTask()
             self.bondsmanRecv()
 
