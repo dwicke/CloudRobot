@@ -15,12 +15,10 @@ class DataCollector(object):
         '''
         writes all data
         '''
-        for k in self.collectedData.keys()
+        for k in self.collectedData.keys():
             thefile = open( k + ".dat", "wb" )
-            i = 0
             for item in self.collectedData[k]:
-                thefile.write("%d,%s\n" % (i, str(item)))
-                i += 1
+                thefile.write("%d,%f\n" % (item[0], item[1]))
             thefile.close()
     def deleteSet(setName):
         del self.collectedData[setName]

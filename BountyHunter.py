@@ -5,6 +5,7 @@ import select
 import json
 from VisualServoing import VisualServoing
 from BountyHunterLearner import BountyHunterLearner
+from DataCollector import DataCollector
 
 ## in the future can dynamically load new task handlers
 ## http://stackoverflow.com/questions/547829/how-to-dynamically-load-a-python-class
@@ -39,7 +40,7 @@ class BountyHunter(object):
         self.bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.bondSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
-
+        self.timesSent = 1
         self.datacollector = DataCollector()
         self.currentHZ = 10
 
@@ -117,9 +118,9 @@ class BountyHunter(object):
 
 
             if self.curtask['name'] == 'DoNothing':
-                self.dataCollector.addPoint(self.currentset, (listData[5], -1.0))
+                self.dataCollector.addPoint(self.currentset, (int(listData[5]), -1.0))
             else:
-                self.dataCollector.addPoint(self.currentset, (listData[5], self.timesSucc / self.timesSent))
+                self.dataCollector.addPoint(self.currentset, (int(listData[5]), self.timesSucc / self.timesSent))
         else:
             print 'ERROR unexpected message: %s' % (data)
 
