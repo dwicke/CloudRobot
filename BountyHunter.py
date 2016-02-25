@@ -43,14 +43,15 @@ class BountyHunter(object):
         self.timesSent = 1
         self.datacollector = DataCollector()
         self.currentHZ = 10
-
-        while True:
+        self.timesSucc = 0
+        self.doneSim = False
+        while self.doneSim == False:
             self.curtask = self.bountyLearner.getTask(self.taskSet)
             print 'current bounty rate for task %s is %f' % (self.curtask['name'], self.curtask['bountyRate'])
             for task in self.taskSet.values():
                 task['currentBounty'] += task['bountyRate']
             self.timesSent += self.curtask['handler'].doTask()
-            self.bondsmanRecv()
+            self.doneSim = self.bondsmanRecv()
 
 
     def bondsmanRecv(self):
@@ -75,7 +76,7 @@ class BountyHunter(object):
         '''
         ready = select.select([self.bondSock], [], [], 0.03)
         if not ready[0]:
-            return None
+            return False
         data, addr = self.bondSock.recvfrom(32768)
         ## check if success or task
         print data
@@ -97,6 +98,7 @@ class BountyHunter(object):
             if listData[2] == -1:
                 # THEN WE ARE FINISHED
                 self.datacollector.writeData()
+                return True
             print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
             totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
             self.curtask['currentBounty'] = self.curtask['initBounty']
@@ -118,11 +120,12 @@ class BountyHunter(object):
 
 
             if self.curtask['name'] == 'DoNothing':
-                self.dataCollector.addPoint(self.currentset, (int(listData[5]), -1.0))
+                self.datacollector.addPoint(self.currentset, (int(listData[5]), -1.0))
             else:
-                self.dataCollector.addPoint(self.currentset, (int(listData[5]), self.timesSucc / self.timesSent))
+                self.datacollector.addPoint(self.currentset, (int(listData[5]), self.timesSucc / self.timesSent))
         else:
             print 'ERROR unexpected message: %s' % (data)
+        return False
 
 # do tasks...
 bme = BountyHunter()
