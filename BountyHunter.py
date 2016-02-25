@@ -15,7 +15,7 @@ class DoNothing(object):
     def __init__(self):
         return None
     def doTask(self):
-        return None
+        return 0
 
 class BountyHunter(object):
 
@@ -40,18 +40,22 @@ class BountyHunter(object):
         self.bondSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
 
+        self.datacollector = DataCollector()
+        self.currentHZ = 10
+
         while True:
             self.curtask = self.bountyLearner.getTask(self.taskSet)
             print 'current bounty rate for task %s is %f' % (self.curtask['name'], self.curtask['bountyRate'])
             for task in self.taskSet.values():
                 task['currentBounty'] += task['bountyRate']
-            self.curtask['handler'].doTask()
+            self.timesSent += self.curtask['handler'].doTask()
             self.bondsmanRecv()
 
 
     def bondsmanRecv(self):
         '''
-            0 string msgType (task/success)
+            Task MSG
+            0 string msgType (task)
             1 string taskName
             2 string[] bountyHunters
             3 float64 initialBounty
@@ -59,6 +63,14 @@ class BountyHunter(object):
             5 float64 deadline
             6 uint32 inputPort
             7 uint32 outputPort
+
+            Succ MSG
+            0 string task (success)
+            1 uint32 taskID
+            2 string winnerIP
+            3 float64 totalTime
+            4 uint32 succCount
+            5 uint32 recvCount
         '''
         ready = select.select([self.bondSock], [], [], 0.03)
         if not ready[0]:
@@ -75,15 +87,39 @@ class BountyHunter(object):
                 # so if I can actually do the task then add the task.
                 if listData[1] in self.taskHandlers:
                     self.taskSet[listData[1] + '-' + addr[0]] = {'handler':self.taskHandlers[listData[1]](addr[0], listData[6], addr[0], listData[7], listData[1]), 'name': listData[1], 'initBounty': listData[3], 'bountyRate': listData[4], 'deadline': listData[5], 'hunters': listData[2], 'currentBounty': listData[3]}
+            else:
+                # we already have that task
+                self.taskSet[listData[1] + '-' + addr[0]]['deadline'] = listData[5]
+                self.currentDataset = str(listData[5]) + 'hzData_'+ self.myIP
         elif listData[0] == 'success':
+
+            if listData[2] == -1:
+                # THEN WE ARE FINISHED
+                self.datacollector.writeData()
             print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
             totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
             self.curtask['currentBounty'] = self.curtask['initBounty']
+
+
+            if listData[4] == 1:
+                if self.currentHZ != 10:
+                    self.currentHZ += 5
+                self.timesSent = 1 # reset.
+                self.timesSucc = 0
+                self.currentset = 'bountyhunter-' + self.myIP + '-' + str(self.currentHZ)
+
             if listData[3] == self.myIP:
                 ## Then I won!!
                 self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 1)
+                self.timesSucc += 1
             else:
                 self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 0)
+
+
+            if self.curtask['name'] == 'DoNothing':
+                self.dataCollector.addPoint(self.currentset, (listData[5], -1.0))
+            else:
+                self.dataCollector.addPoint(self.currentset, (listData[5], self.timesSucc / self.timesSent))
         else:
             print 'ERROR unexpected message: %s' % (data)
 
