@@ -68,12 +68,13 @@ class BountyHunter(object):
             7 uint32 outputPort
 
             Succ MSG
-            0 string task (success)
-            1 uint32 taskID
-            2 string winnerIP
-            3 float64 totalTime
-            4 uint32 succCount
-            5 uint32 recvCount
+            0 string msgType (success)
+            1 string task
+            2 uint32 taskID
+            3 string winnerIP
+            4 float64 totalTime
+            5 uint32 succCount
+            6 uint32 recvCount
         '''
         ready = select.select([self.bondSock], [], [], 0.03)
         if not ready[0]:
