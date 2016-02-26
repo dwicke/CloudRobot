@@ -105,7 +105,7 @@ class BountyHunter(object):
             self.curtask['currentBounty'] = self.curtask['initBounty']
 
 
-            if listData[4] == 1:
+            if listData[5] == 1:
                 if self.currentHZ != 10:
                     self.currentHZ += 5
                 self.timesSent = 1 # reset.
