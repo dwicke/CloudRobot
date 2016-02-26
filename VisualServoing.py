@@ -7,7 +7,7 @@ import zlib
 import thread
 import json
 import sys
-
+import select
 class VisualServoing(object):
 
 
@@ -41,8 +41,7 @@ class VisualServoing(object):
         self.taskName = taskName
 
     def doTask(self):
-        self.visualServoingAction()
-        return 1
+        return self.visualServoingAction()
 
 
     def findBlob(self, frame):
@@ -80,6 +79,10 @@ class VisualServoing(object):
 
     def processSocketImage(self) :
         #print 'Connected to server'
+
+        ready_socks,_,_ = select.select([self.sock], [], [], 0.3)
+        if len(ready_socks) == 0:
+            return False, None
         data, addr = self.sock.recvfrom(4096)
         # first decompress the data and split on newline
         #print 'I got data! size from %s is: %d' % (addr[0], len(data))
@@ -97,7 +100,7 @@ class VisualServoing(object):
             rcvimg = decompData[loc+1:]
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
-            return None
+            return False, None
 
 
         # self.imageID = decompData[0]
@@ -107,7 +110,7 @@ class VisualServoing(object):
 
         image = np.array(bytearray(rcvimg), dtype="uint8").reshape(self.HEIGHT,self.WIDTH)
 
-        return image
+        return True, image
 
     ## units are mm/s degrees/s
     def visualservo(self, blobx, bloby) :
@@ -134,8 +137,9 @@ class VisualServoing(object):
 
 
     def visualServoingAction(self):
-        image = self.processSocketImage()
-        #if image == None: # then I got a bad packet. must decide what to do now
+        success, image = self.processSocketImage()
+        if success == False: # then I got a bad packet. must decide what to do now
+            return 0.0
          #   return None
         thresh, image, cx, cy = self.findBlob(image)
         #print 'x = "%d" y = "%d"' % (cx, cy)
@@ -151,3 +155,4 @@ class VisualServoing(object):
         self.prevAng = angularVelocity
         print 'Sending %s to the robot' % (data)
         self.vel_socket.sendto(data, self.robotClient)
+        return 1.0

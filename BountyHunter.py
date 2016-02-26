@@ -16,7 +16,7 @@ class DoNothing(object):
     def __init__(self):
         return None
     def doTask(self):
-        return 0
+        return 0.0
 
 class BountyHunter(object):
 
@@ -40,10 +40,10 @@ class BountyHunter(object):
         self.bondSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.bondSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.bondSock.bind(('0.0.0.0', self.BONDSMANPORT))
-        self.timesSent = 1
+        self.timesSent = 1.0
         self.datacollector = DataCollector()
-        self.currentHZ = 10
-        self.timesSucc = 0
+        self.currentHZ = 5
+        self.timesSucc = 0.0
         self.doneSim = False
         self.currentset = ''
         while self.doneSim == False:
@@ -100,22 +100,22 @@ class BountyHunter(object):
                 # THEN WE ARE FINISHED
                 self.datacollector.writeData()
                 return True
-            print 'Recv a success message for task %s total time = %s' % (listData[1], listData[4])
+            print 'Recv a success message for task %s total time = %s SuccCount = %d' % (listData[1], listData[4], listData[5])
             totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
             self.curtask['currentBounty'] = self.curtask['initBounty']
 
 
             if listData[5] == 1:
-                if self.currentHZ != 10:
-                    self.currentHZ += 5
-                self.timesSent = 1 # reset.
-                self.timesSucc = 0
+                print 'list data was 1!'
+                self.currentHZ += 5
+                self.timesSent = 1.0 # reset.
+                self.timesSucc = 0.0
                 self.currentset = 'bountyhunter-' + self.myIP + '-' + str(self.currentHZ)
 
             if listData[3] == self.myIP:
                 ## Then I won!!
                 self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 1)
-                self.timesSucc += 1
+                self.timesSucc += 1.0
             else:
                 self.bountyLearner.learn(listData[1] + '-' + addr[0], totalTime, 0, 0)
 
