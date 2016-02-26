@@ -56,6 +56,6 @@ class BountyHunterLearner(object):
             if self.lastTask != bestTask['name'] or maxI != self.lastI:
                 self.lastTask = bestTask['name']
                 self.lastI = maxI
-                print 'Picked specific task %s with I = %f' % (bestTask['name'], maxI)
+                #print 'Picked specific task %s with I = %f' % (bestTask['name'], maxI)
             return bestTask
 

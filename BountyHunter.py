@@ -81,7 +81,7 @@ class BountyHunter(object):
             return False
         data, addr = self.bondSock.recvfrom(32768)
         ## check if success or task
-        print data
+        #print data
         listData = json.loads(data)
         if listData[0] == 'task':
             print listData[1]
@@ -101,7 +101,7 @@ class BountyHunter(object):
                 # THEN WE ARE FINISHED
                 self.datacollector.writeData()
                 return True
-            print 'Recv a success message for task %s total time = %s SuccCount = %d' % (listData[1], listData[4], listData[5])
+            #print 'Recv a success message for task %s total time = %s SuccCount = %d' % (listData[1], listData[4], listData[5])
             totalTime = float(listData[4]) * 1000.0 # convert to milliseconds
             self.curtask['currentBounty'] = self.curtask['initBounty']
 
@@ -112,7 +112,6 @@ class BountyHunter(object):
                 self.timesSent = 1.0 # reset.
                 self.timesSucc = 0.0
                 self.currentset = 'bountyhunter-' + self.myIP + '-' + str(self.currentHZ)
-                self.bondSock.sendto('hzRecv', addr)
 
 
             if listData[3] == self.myIP:
