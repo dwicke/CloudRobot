@@ -112,6 +112,8 @@ class BountyHunter(object):
                 self.timesSent = 1.0 # reset.
                 self.timesSucc = 0.0
                 self.currentset = 'bountyhunter-' + self.myIP + '-' + str(self.currentHZ)
+                self.bondSock.sendto('hzRecv', addr)
+
 
             if listData[3] == self.myIP:
                 ## Then I won!!
