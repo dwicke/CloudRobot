@@ -45,9 +45,10 @@ class BountyHunter(object):
         self.currentHZ = 10
         self.timesSucc = 0
         self.doneSim = False
+        self.currentset = ''
         while self.doneSim == False:
             self.curtask = self.bountyLearner.getTask(self.taskSet)
-            print 'current bounty rate for task %s is %f' % (self.curtask['name'], self.curtask['bountyRate'])
+            #print 'current bounty rate for task %s is %f' % (self.curtask['name'], self.curtask['bountyRate'])
             for task in self.taskSet.values():
                 task['currentBounty'] += task['bountyRate']
             self.timesSent += self.curtask['handler'].doTask()

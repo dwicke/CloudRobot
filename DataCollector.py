@@ -16,8 +16,10 @@ class DataCollector(object):
         writes all data
         '''
         for k in self.collectedData.keys():
-            thefile = open( k + ".dat", "wb" )
+            print 'writing file ' + "/tmp/" + k + ".dat"
+            thefile = open( "/tmp/" + k + ".dat", "w" )
             for item in self.collectedData[k]:
+
                 thefile.write("%d,%f\n" % (item[0], item[1]))
             thefile.close()
     def deleteSet(setName):

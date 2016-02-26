@@ -48,7 +48,7 @@ class BountyHunterLearner(object):
                 T = self.TTable.getQValue(k, 0)
                 P = self.PTable.getQValue(k, 0)
                 I = (v['currentBounty']/T)*P
-                print 'The currentBounty = %f and I = %f T = %f P = %f for task %s' % (v['currentBounty'], I, T, P, k)
+                #print 'The currentBounty = %f and I = %f T = %f P = %f for task %s' % (v['currentBounty'], I, T, P, k)
                 if I > maxI:
                     maxI = I
                     bestTask = v
