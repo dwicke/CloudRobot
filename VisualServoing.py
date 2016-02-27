@@ -51,8 +51,8 @@ class VisualServoing(object):
 
 
         thresh = cv2.erode(frame, None, iterations=2)
-        thresh = cv2.dilate(thresh, None, iterations=2)
-        thresh2 = thresh.copy()
+        #thresh = cv2.dilate(thresh, None, iterations=2)
+        #thresh2 = thresh.copy()
         # find contours in the threshold image
         contours,hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
@@ -69,11 +69,13 @@ class VisualServoing(object):
         try:
             M = cv2.moments(best_cnt)
             cx,cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
-            cv2.circle(frame,(cx,cy),5,255,-1)
+            #cv2.circle(frame,(cx,cy),5,255,-1)
             ###cx and cy is the center of the circle
-            return thresh2, frame, cx, cy
+            return cx, cy
+            #return thresh2, frame, cx, cy
         except:
-            return thresh2, frame, -1, -1
+            return -1, -1
+            #return thresh2, frame, -1, -1
 
 
 
@@ -137,13 +139,24 @@ class VisualServoing(object):
 
 
 
+    def blah(self):
+        starttime = time.time()
+        success, image = self.processSocketImage()
+        forwardVelocity, angularVelocity = 0.03, 0.0
+        data = '%f, %f, %d, %f, %s' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp), self.taskName)
+        self.vel_socket.sendto(data, self.robotClient)
+        endtime = time.time()
+        print "total time = %f" %(endtime - starttime)
+        return 1.0
+
     def visualServoingAction(self):
         starttime = time.time()
         success, image = self.processSocketImage()
         if success == False: # then I got a bad packet. must decide what to do now
             return 0.0
          #   return None
-        thresh, image, cx, cy = self.findBlob(image)
+        #thresh, image, cx, cy = self.findBlob(image)
+        cx, cy = self.findBlob(image)
         #print 'x = "%d" y = "%d"' % (cx, cy)
         #cv2.imshow("Image", image)
         #cv2.imshow("thresh", thresh)
@@ -158,5 +171,5 @@ class VisualServoing(object):
         #print 'Sending %s to the robot' % (data)
         self.vel_socket.sendto(data, self.robotClient)
         endtime = time.time()
-        print "total time = %f" %(endtime - starttime)
+        print "id = %d total time = %f" %(int(self.imageID), endtime - starttime)
         return 1.0
