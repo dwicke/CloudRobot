@@ -8,6 +8,7 @@ import thread
 import json
 import sys
 import select
+import time
 class VisualServoing(object):
 
 
@@ -137,6 +138,7 @@ class VisualServoing(object):
 
 
     def visualServoingAction(self):
+        starttime = time.time()
         success, image = self.processSocketImage()
         if success == False: # then I got a bad packet. must decide what to do now
             return 0.0
@@ -153,6 +155,8 @@ class VisualServoing(object):
             # need to reply since it is asking for it... otherwise not rewarded...
         self.prevFor = forwardVelocity
         self.prevAng = angularVelocity
-        print 'Sending %s to the robot' % (data)
+        #print 'Sending %s to the robot' % (data)
         self.vel_socket.sendto(data, self.robotClient)
+        endtime = time.time()
+        print "total time = %f" %(endtime - starttime)
         return 1.0
