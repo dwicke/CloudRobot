@@ -129,7 +129,7 @@ class VisualServoing(object):
         elif blobx > (centerX + 10) :
             angV = -0.10
             #print "setting turn right velocity"
-        elif bloby < self.HEIGHT - 15 :
+        if bloby < self.HEIGHT - 15 :
             forV = 0.1
             #print "setting forward velocity"
 
