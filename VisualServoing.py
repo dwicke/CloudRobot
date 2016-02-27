@@ -149,10 +149,10 @@ class VisualServoing(object):
         # ## units are mm/s degrees/s
         forwardVelocity, angularVelocity = self.visualservo(cx, cy)
         data = '%f, %f, %d, %f, %s' % (forwardVelocity, angularVelocity, int(self.imageID), float(self.imageTimestamp), self.taskName)
-        if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
+        #if self.prevFor != forwardVelocity or self.prevAng != angularVelocity:
             # need to reply since it is asking for it... otherwise not rewarded...
-            self.prevFor = forwardVelocity
-            self.prevAng = angularVelocity
-            print 'Sending %s to the robot' % (data)
-            self.vel_socket.sendto(data, self.robotClient)
+        self.prevFor = forwardVelocity
+        self.prevAng = angularVelocity
+        print 'Sending %s to the robot' % (data)
+        self.vel_socket.sendto(data, self.robotClient)
         return 1.0
