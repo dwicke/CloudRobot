@@ -32,6 +32,14 @@ class BountyHunterLearner(object):
     ## tasks is a list of tasks [{'name': 'task_name', 'cur_bounty': <val>, }, ...]
     ## return task name i'm picking
     def getTask(self, tasks):
+
+        if len(tasks) == 2:
+            for k, v in tasks.iteritems():
+                if k != 'DoNothing':
+                    return v
+        else:
+            return tasks['DoNothing']
+
         if self.epsilonChooseRandomTask > random.random():
             # then pick a random task
             taskName = random.choice(tasks.keys())
