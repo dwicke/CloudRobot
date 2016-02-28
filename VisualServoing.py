@@ -9,6 +9,7 @@ import json
 import sys
 import select
 import time
+import random
 class VisualServoing(object):
 
 
