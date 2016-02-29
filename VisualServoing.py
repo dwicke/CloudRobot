@@ -41,7 +41,7 @@ class VisualServoing(object):
         self.MSGLEN = self.WIDTH*self.HEIGHT*self.CHANNELS
         self.BONDSMANPORT = 14000
         self.taskName = taskName
-        self.probThresh = .6
+        self.probThresh = .7
 
 
     def doTask(self):
