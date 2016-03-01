@@ -41,12 +41,12 @@ class VisualServoing(object):
         self.MSGLEN = self.WIDTH*self.HEIGHT*self.CHANNELS
         self.BONDSMANPORT = 14000
         self.taskName = taskName
-        self.probThresh = .7
+        self.probThresh = .35
 
 
     def doTask(self):
         if random.random() < self.probThresh:
-            time.sleep(.02)
+            time.sleep(.03)
 
         return self.visualServoingAction()
 
