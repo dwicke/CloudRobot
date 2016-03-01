@@ -46,6 +46,7 @@ class VisualServoing(object):
 
     def doTask(self):
         if random.random() < self.probThresh:
+            print "///////////////sleeping!------------------>"
             time.sleep(.03)
 
         return self.visualServoingAction()
