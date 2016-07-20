@@ -1,5 +1,14 @@
 #!/usr/bin/env python
+## The tasker or the bondsman is the robot
+## so here the comm mechanism is ACH
+
 import ach
+import subprocess
+
+
+subprocess.check_process(["achd", "push", "159.203.67.159", "foo"])
+
+
 c = ach.Channel('foo')
 c.flush()
 
