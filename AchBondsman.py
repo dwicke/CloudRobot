@@ -4,10 +4,12 @@
 
 import ach
 import subprocess
+from ctypes import *
 
 
-subprocess.call(["achd", "push", "159.203.67.159", "foo1"])
-print 'connected to the server'
+
+#subprocess.call(["achd", "push", "159.203.67.159", "foo1"])
+#print 'connected to the server'
 
 c = ach.Channel('foo1')
 c.flush()
