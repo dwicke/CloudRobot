@@ -17,4 +17,4 @@ dat.RSP = 2.34
 print 'dat leb = %f' % (dat.LEB)
 
 c.put(dat)
-
+c.close()
