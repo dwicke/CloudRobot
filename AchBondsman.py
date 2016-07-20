@@ -6,10 +6,10 @@ import ach
 import subprocess
 
 
-subprocess.call(["achd", "push", "159.203.67.159", "foo"])
+subprocess.call(["achd", "push", "159.203.67.159", "foo1"])
 print 'connected to the server'
 
-c = ach.Channel('foo')
+c = ach.Channel('foo1')
 c.flush()
 
 

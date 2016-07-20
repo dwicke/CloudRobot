@@ -2,7 +2,7 @@
 
 import ach
 from ctypes import *
-c = ach.Channel('foo')
+c = ach.Channel('foo1')
 c.chmod(0666) ## set so the robot can connect
 c.flush() ## clear old stuff out
 
