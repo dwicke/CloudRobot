@@ -22,7 +22,11 @@ class Data(Structure):
                 ('RSP', c_double)]
 
 dat = Data()
-c.get( dat, wait=True, last=True )
+
+dat.LEB = 3.4
+dat.RSP = 2.34
+c.put(dat)
+c.close()
 
 print 'dat leb = %f' % (dat.LEB)
 
