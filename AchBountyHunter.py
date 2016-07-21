@@ -17,5 +17,8 @@ c.get( dat, wait=True, last=True )
 # dat.RSP = 2.34
 print 'dat leb = %f' % (dat.LEB)
 
+dat.LEB = 0.0
+print 'sending'
+c.put(dat)
 
 c.close()

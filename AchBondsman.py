@@ -8,15 +8,15 @@ from ctypes import *
 
 
 
-subprocess.call(["achd", "push", "159.203.67.159", "foo1", "&"])
+subprocess.call(["achd push 159.203.67.159 foo159 &"])
+subprocess.call(["achd push 44.55.143.47 foo47 &"])
 print 'connected to the server'
 
-c = ach.Channel('foo1')
-c.flush()
-
-
-
-c.flush() ## clear old stuff out
+c = []
+c.append(ach.Channel('foo159'))
+c.append(ach.Channel('foo47'))
+c[0].flush()
+c[1].flush()
 
 
 class Data(Structure):
@@ -24,11 +24,19 @@ class Data(Structure):
                 ('RSP', c_double)]
 
 dat = Data()
-
 dat.LEB = 3.4
 dat.RSP = 2.34
-c.put(dat)
-c.close()
 
-print 'dat leb = %f' % (dat.LEB)
+for chan in c:
+    chan.put(dat)
+
+for chan in c:
+    rec = Data()
+    chan.get(rec, wait=True, last=True)
+    print 'rec leb = %f' % (rec.LEB)
+
+for chan in c:
+    chan.close()
+
+print 'Finished'
 
