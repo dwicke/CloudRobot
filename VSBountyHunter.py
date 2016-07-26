@@ -15,7 +15,8 @@ class VelDat(Structure):
                 ('angularVelocity', c_double),
                 ('id', c_double)]
 
-
+HEIGHT = 240
+WIDTH = 320
 
 def visualservo(blobx, bloby):
         forV = 0.0
@@ -86,11 +87,10 @@ while True:
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
         print("got the task data!! for id {}".format(taskdat.id))
-        # cx, cy = findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(800,800))
+        cx, cy = findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(HEIGHT,WIDHT))
 
-        # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
-        forwardVelocity = 0.1
-        angularVelocity = 0.0
+        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+
         veldat = VelDat()
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
