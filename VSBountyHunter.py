@@ -28,17 +28,20 @@ sendRespChannel.flush() ## clear old stuff out
 
 ## now
 while True:
-    taskdat = TaskData()
-    recvTaskChannel.get( taskdat, wait=True, last=True )
-    cx, cy = self.findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(self.HEIGHT, self.WIDTH))
+    try:
+        taskdat = TaskData()
+        recvTaskChannel.get( taskdat, wait=True, last=True )
+        cx, cy = self.findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(self.HEIGHT, self.WIDTH))
 
-    forwardVelocity, angularVelocity = self.visualservo(cx, cy)
-    veldat = VelDat()
-    veldat.forwardVelocity = forwardVelocity
-    veldat.angularVelocity = angularVelocity
-    veldat.id = taskdat.id
+        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+        veldat = VelDat()
+        veldat.forwardVelocity = forwardVelocity
+        veldat.angularVelocity = angularVelocity
+        veldat.id = taskdat.id
 
-    sendRespChannel.put(veldat)
+        sendRespChannel.put(veldat)
+    except:
+        raise ## for ctrl+c break out.
 
 
 def visualservo(blobx, bloby):
