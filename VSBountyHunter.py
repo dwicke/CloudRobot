@@ -17,11 +17,11 @@ class VelDat(Structure):
 my_ip = urlopen('http://ip.42.pl/raw').read()
 print("myip = " + my_ip)
 ## connect to the channels
-recvTaskChannel = ach.Channel(my_ip + "VSTaskImg")
+recvTaskChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSTaskImg")
 recvTaskChannel.chmod(0666) ## set so the robot can connect
 recvTaskChannel.flush() ## clear old stuff out
 
-sendRespChannel = ach.Channel(my_ip + "VSResp")
+sendRespChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSResp")
 sendRespChannel.chmod(0666) ## set so the robot can connect
 sendRespChannel.flush() ## clear old stuff out
 
