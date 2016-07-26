@@ -15,22 +15,23 @@ class VelDat(Structure):
 
 
 my_ip = urlopen('http://ip.42.pl/raw').read()
-
+print("myip = " + my_ip)
 ## connect to the channels
-recvTaskChannel = ach.Channel(my_ip + "-VSTaskImg")
+recvTaskChannel = ach.Channel(my_ip + "VSTaskImg")
 recvTaskChannel.chmod(0666) ## set so the robot can connect
 recvTaskChannel.flush() ## clear old stuff out
 
-sendRespChannel = ach.Channel(my_ip + "-VSResp")
+sendRespChannel = ach.Channel(my_ip + "VSResp")
 sendRespChannel.chmod(0666) ## set so the robot can connect
 sendRespChannel.flush() ## clear old stuff out
 
 
 ## now
 while True:
-    try:
         taskdat = TaskData()
-        recvTaskChannel.get( taskdat, wait=True, last=True )
+        print("waiting for task data...")
+        recvTaskChannel.get(taskdat, wait=True, last=True)
+        print("got the task data!!")
         cx, cy = self.findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(self.HEIGHT, self.WIDTH))
 
         forwardVelocity, angularVelocity = self.visualservo(cx, cy)
@@ -38,10 +39,9 @@ while True:
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
         veldat.id = taskdat.id
-
+        print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
         sendRespChannel.put(veldat)
-    except:
-        raise ## for ctrl+c break out.
+
 
 
 def visualservo(blobx, bloby):
