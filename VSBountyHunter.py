@@ -14,35 +14,6 @@ class VelDat(Structure):
                 ('id', c_double)]
 
 
-my_ip = urlopen('http://ip.42.pl/raw').read()
-print("myip = " + my_ip)
-## connect to the channels
-recvTaskChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSTaskImg")
-recvTaskChannel.chmod(0666) ## set so the robot can connect
-recvTaskChannel.flush() ## clear old stuff out
-
-sendRespChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSResp")
-sendRespChannel.chmod(0666) ## set so the robot can connect
-sendRespChannel.flush() ## clear old stuff out
-
-
-## now
-while True:
-        taskdat = TaskData()
-        print("waiting for task data...")
-        recvTaskChannel.get(taskdat, wait=True, last=True)
-        print("got the task data!!")
-        cx, cy = findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(800,800))
-
-        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
-        veldat = VelDat()
-        veldat.forwardVelocity = forwardVelocity
-        veldat.angularVelocity = angularVelocity
-        veldat.id = taskdat.id
-        print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
-        sendRespChannel.put(veldat)
-
-
 
 def visualservo(blobx, bloby):
         forV = 0.0
@@ -93,3 +64,33 @@ def findBlob(frame):
             #return thresh2, frame, cx, cy
         except:
             return -1, -1
+
+
+my_ip = urlopen('http://ip.42.pl/raw').read()
+print("myip = " + my_ip)
+## connect to the channels
+recvTaskChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSTaskImg")
+recvTaskChannel.chmod(0666) ## set so the robot can connect
+recvTaskChannel.flush() ## clear old stuff out
+
+sendRespChannel = ach.Channel(my_ip.replace(".", "").replace("\n", "") + "VSResp")
+sendRespChannel.chmod(0666) ## set so the robot can connect
+sendRespChannel.flush() ## clear old stuff out
+
+
+## now
+while True:
+        taskdat = TaskData()
+        print("waiting for task data...")
+        recvTaskChannel.get(taskdat, wait=True, last=True)
+        print("got the task data!!")
+        cx, cy = findBlob(np.array(bytearray(taskdat.img), dtype="uint8").reshape(800,800))
+
+        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+        veldat = VelDat()
+        veldat.forwardVelocity = forwardVelocity
+        veldat.angularVelocity = angularVelocity
+        veldat.id = taskdat.id
+        print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
+        sendRespChannel.put(veldat)
+
