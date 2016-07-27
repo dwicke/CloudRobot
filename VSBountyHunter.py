@@ -87,9 +87,26 @@ while True:
         taskdat = bytearray(320*240*3)
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
-        #print("got the task data!! for id {}".format(taskdat.id))
+        imageBuffer = None
+        print("recv data")
         print(taskdat)
-        # cx, cy = findBlob(np.array(bytearray(zlib.decompress(taskdat.img.value)), dtype="uint8").reshape(HEIGHT,WIDHT))
+        try:
+                decompData = zlib.decompress(taskdat)
+                #print 'the data %s' % (decompData)
+                loc = decompData.find(',')
+                imageID = decompData[:loc]
+                if imageID > prevID:
+                    prevID = imageID
+                    #print 'image id %s' % (self.imageID)
+                    decompData = decompData[loc+1:]
+                    imageBuffer = decompData
+            except Exception as details:
+                print 'could not decompress image stuffs error: %s' % (details)
+                imageBuffer = None
+
+
+
+        cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDHT))
 
         # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
 
@@ -98,7 +115,7 @@ while True:
         veldat = VelDat()
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
-        veldat.id = taskdat.id
+        #veldat.id = taskdat.id
         print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
         sendRespChannel.put(veldat)
 
