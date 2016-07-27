@@ -92,7 +92,7 @@ while True:
         print("recv data")
         print(taskdat)
         try:
-            decompData = zlib.decompress(taskdat)
+            decompData = zlib.decompress(str(taskdat))
             #print 'the data %s' % (decompData)
             loc = decompData.find(',')
             imageID = decompData[:loc]
