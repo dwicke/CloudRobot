@@ -89,6 +89,7 @@ while True:
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
         imageBuffer = None
+        imageID = -1
         print("recv data")
         try:
             decompData = zlib.decompress(str(taskdat))
@@ -98,20 +99,18 @@ while True:
 
             decompData = decompData[loc+1:]
             imageBuffer = decompData
+
+            cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
+
+            forwardVelocity, angularVelocity = visualservo(cx, cy)
+
+            veldat = VelDat()
+            veldat.forwardVelocity = forwardVelocity
+            veldat.angularVelocity = angularVelocity
+            veldat.id = imageID
+            print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
+            sendRespChannel.put(veldat)
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
             imageBuffer = None
-
-
-
-        cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
-
-        forwardVelocity, angularVelocity = visualservo(cx, cy)
-
-        veldat = VelDat()
-        veldat.forwardVelocity = forwardVelocity
-        veldat.angularVelocity = angularVelocity
-        #veldat.id = taskdat.id
-        print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
-        sendRespChannel.put(veldat)
 
