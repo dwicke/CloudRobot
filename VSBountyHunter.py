@@ -105,7 +105,7 @@ while True:
 
 
 
-        cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDHT))
+        cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
 
         # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
 
