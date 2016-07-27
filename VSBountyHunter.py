@@ -91,18 +91,18 @@ while True:
         print("recv data")
         print(taskdat)
         try:
-                decompData = zlib.decompress(taskdat)
-                #print 'the data %s' % (decompData)
-                loc = decompData.find(',')
-                imageID = decompData[:loc]
-                if imageID > prevID:
-                    prevID = imageID
-                    #print 'image id %s' % (self.imageID)
-                    decompData = decompData[loc+1:]
-                    imageBuffer = decompData
-            except Exception as details:
-                print 'could not decompress image stuffs error: %s' % (details)
-                imageBuffer = None
+            decompData = zlib.decompress(taskdat)
+            #print 'the data %s' % (decompData)
+            loc = decompData.find(',')
+            imageID = decompData[:loc]
+            if imageID > prevID:
+                prevID = imageID
+                #print 'image id %s' % (self.imageID)
+                decompData = decompData[loc+1:]
+                imageBuffer = decompData
+        except Exception as details:
+            print 'could not decompress image stuffs error: %s' % (details)
+            imageBuffer = None
 
 
 
