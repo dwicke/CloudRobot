@@ -87,10 +87,13 @@ while True:
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
         print("got the task data!! for id {}".format(taskdat.id))
-        cx, cy = findBlob(np.array(bytearray(zlib.decompress(taskdat.img.value)), dtype="uint8").reshape(HEIGHT,WIDHT))
+        print("{}".format(taskdat.img.value))
+        # cx, cy = findBlob(np.array(bytearray(zlib.decompress(taskdat.img.value)), dtype="uint8").reshape(HEIGHT,WIDHT))
 
-        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+        # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
 
+        veldat.forwardVelocity = 0.1
+        veldat.angularVelocity = 0.0
         veldat = VelDat()
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
