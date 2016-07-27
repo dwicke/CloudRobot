@@ -93,8 +93,8 @@ while True:
 
         # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
 
-        veldat.forwardVelocity = 0.1
-        veldat.angularVelocity = 0.0
+        forwardVelocity = 0.1
+        angularVelocity = 0.0
         veldat = VelDat()
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
