@@ -90,7 +90,6 @@ while True:
         recvTaskChannel.get(taskdat, wait=True, last=True)
         imageBuffer = None
         print("recv data")
-        print(taskdat)
         try:
             decompData = zlib.decompress(str(taskdat))
 
