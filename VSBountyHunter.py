@@ -26,14 +26,14 @@ def visualservo(blobx, bloby):
             return forV, angV
 
 #       p controller for horizontal position
-        centerX = self.WIDTH / 2
+        centerX = WIDTH / 2
         angPGain = 0.1
         angError = blobx - centerX
         angV = -1.0 * angError * angPGain
 
 #       p controller for vertical position
         forPGain = 0.1
-        forError = self.HEIGHT - bloby - 50
+        forError = HEIGHT - bloby - 50
         forV = forError * forPGain
 
         return forV, angV
@@ -93,10 +93,10 @@ while True:
         print(taskdat)
         try:
             decompData = zlib.decompress(str(taskdat))
-            #print 'the data %s' % (decompData)
+
             loc = decompData.find(',')
             imageID = decompData[:loc]
-            #print 'image id %s' % (self.imageID)
+
             decompData = decompData[loc+1:]
             imageBuffer = decompData
         except Exception as details:
