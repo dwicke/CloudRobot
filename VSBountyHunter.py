@@ -5,6 +5,7 @@ from ctypes import *
 from urllib2 import urlopen
 import cv2
 import numpy as np
+import zlib
 
 class TaskData(Structure):
     _fields_ = [('id', c_double),
