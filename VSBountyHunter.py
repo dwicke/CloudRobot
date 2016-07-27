@@ -84,7 +84,7 @@ sendRespChannel.flush() ## clear old stuff out
 ## now
 while True:
         taskdat = TaskData()
-        taskdat.img = bytearray(320*240*3)
+        taskdat.img = id(bytearray(320*240*3))
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
         print("got the task data!! for id {}".format(taskdat.id))
