@@ -83,12 +83,12 @@ sendRespChannel.flush() ## clear old stuff out
 
 ## now
 while True:
-        taskdat = TaskData()
-        taskdat.img = id(bytearray(320*240*3))
+
+        taskdat = bytearray(320*240*3)
         print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
-        print("got the task data!! for id {}".format(taskdat.id))
-        print(taskdat.img)
+        #print("got the task data!! for id {}".format(taskdat.id))
+        print(taskdat)
         # cx, cy = findBlob(np.array(bytearray(zlib.decompress(taskdat.img.value)), dtype="uint8").reshape(HEIGHT,WIDHT))
 
         # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
