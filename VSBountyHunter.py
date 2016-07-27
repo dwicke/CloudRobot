@@ -107,10 +107,8 @@ while True:
 
         cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
 
-        # forwardVelocity, angularVelocity = self.visualservo(cx, cy)
+        forwardVelocity, angularVelocity = self.visualservo(cx, cy)
 
-        forwardVelocity = 0.1
-        angularVelocity = 0.0
         veldat = VelDat()
         veldat.forwardVelocity = forwardVelocity
         veldat.angularVelocity = angularVelocity
