@@ -92,13 +92,19 @@ while True:
         imageID = -1
         print("recv data")
         try:
-            decompData = zlib.decompress(str(taskdat))
-
+            firstComma = str(taskdat).find(',')
+            compressedSize = str(taskdat)[:firstComma]
+            print("Compressed Size is {}".format(compressedSize))
+            compressedData = str(taskdat)[firstComma+1:compressedSize]
+            print("length of compressed data = ".format(len(compressedData)))
+            decompData = zlib.decompress(compressedData)
+            print("decompressed message")
             loc = decompData.find(',')
             imageID = decompData[:loc]
-
+            print("image id = {}".(imageID))
             decompData = decompData[loc+1:]
             imageBuffer = decompData
+            print("got the image")
 
             cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
 
