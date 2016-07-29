@@ -96,12 +96,12 @@ while True:
             compressedSize = str(taskdat)[:firstComma]
             print("Compressed Size is {}".format(compressedSize))
             compressedData = str(taskdat)[firstComma+1:compressedSize]
-            print("length of compressed data = ".format(len(compressedData)))
+            print("length of compressed data = {}".format(len(compressedData)))
             decompData = zlib.decompress(compressedData)
             print("decompressed message")
             loc = decompData.find(',')
             imageID = decompData[:loc]
-            print("image id = {}".(imageID))
+            print("image id = {}".format(imageID))
             decompData = decompData[loc+1:]
             imageBuffer = decompData
             print("got the image")
