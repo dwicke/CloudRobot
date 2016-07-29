@@ -93,31 +93,31 @@ while True:
         print("recv data")
         try:
 
-            print("size of taskdat = {}".format(len(taskdat)))
-            # firstComma = str(taskdat).find(',')
+            # firstComma = taskdat.find(',')
             # compressedSize = str(taskdat)[:firstComma]
             # print("Compressed Size is {}".format(compressedSize))
-            # compressedData = str(taskdat)[firstComma+1:compressedSize]
+            # compressedData = str(taskdat)[firstComma+1: int(compressedSize) + firstComma + 1]
             # print("length of compressed data = {}".format(len(compressedData)))
-            # decompData = zlib.decompress(compressedData)
-            # print("decompressed message")
-            # loc = decompData.find(',')
-            # imageID = decompData[:loc]
-            # print("image id = {}".format(imageID))
-            # decompData = decompData[loc+1:]
-            # imageBuffer = decompData
-            # print("got the image")
+            #decompData = zlib.decompress(compressedData)
+            decompData = zlib.decompress(str(taskdat))
+            print("decompressed message")
+            loc = decompData.find(',')
+            imageID = decompData[:loc]
+            print("image id = {}".format(imageID))
+            decompData = decompData[loc+1:]
+            imageBuffer = decompData
+            print("got the image")
 
-            # cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
+            cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
 
-            # forwardVelocity, angularVelocity = visualservo(cx, cy)
+            forwardVelocity, angularVelocity = visualservo(cx, cy)
 
-            # veldat = VelDat()
-            # veldat.forwardVelocity = forwardVelocity
-            # veldat.angularVelocity = angularVelocity
-            # veldat.id = imageID
-            # print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
-            # sendRespChannel.put(veldat)
+            veldat = VelDat()
+            veldat.forwardVelocity = forwardVelocity
+            veldat.angularVelocity = angularVelocity
+            veldat.id = float(imageID)
+            print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
+            sendRespChannel.put(veldat)
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
             imageBuffer = None
