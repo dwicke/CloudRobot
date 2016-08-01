@@ -6,6 +6,7 @@ from urllib2 import urlopen
 import cv2
 import numpy as np
 import zlib
+import time
 
 class TaskData(Structure):
     _fields_ = [('id', c_double),
@@ -27,14 +28,14 @@ def visualservo(blobx, bloby):
 
 #       p controller for horizontal position
         centerX = WIDTH / 2
-        angPGain = 0.1
+        angPGain = .001#0.000625
         angError = blobx - centerX
-        angV = -1.0 * angError * angPGain
+        angV = -1.0 * angError * angPGain ## so max |-.16|  320/2*x = .1
 
 #       p controller for vertical position
-        forPGain = 0.1
+        forPGain = .001#0.00053
         forError = HEIGHT - bloby - 50
-        forV = forError * forPGain
+        forV = forError * forPGain ## max is .1 since furthest can be is 190
 
         return forV, angV
 
@@ -44,7 +45,7 @@ def findBlob(frame):
 
 
         thresh = cv2.erode(frame, None, iterations=2)
-        #thresh = cv2.dilate(thresh, None, iterations=2)
+        thresh = cv2.dilate(thresh, None, iterations=2)
         #thresh2 = thresh.copy()
         # find contours in the threshold image
         contours,hierarchy = cv2.findContours(thresh,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
@@ -85,28 +86,23 @@ sendRespChannel.flush() ## clear old stuff out
 ## now
 while True:
 
-        taskdat = bytearray(320*240*3)
-        print("waiting for task data...")
+        taskdat = bytearray(100000)
+        #print("waiting for task data...")
         recvTaskChannel.get(taskdat, wait=True, last=True)
+        startTime = time.time()
         imageBuffer = None
         imageID = -1
-        print("recv data")
+        #print("recv data")
         try:
 
-            # firstComma = taskdat.find(',')
-            # compressedSize = str(taskdat)[:firstComma]
-            # print("Compressed Size is {}".format(compressedSize))
-            # compressedData = str(taskdat)[firstComma+1: int(compressedSize) + firstComma + 1]
-            # print("length of compressed data = {}".format(len(compressedData)))
-            #decompData = zlib.decompress(compressedData)
             decompData = zlib.decompress(str(taskdat))
-            print("decompressed message")
+            #print("decompressed message")
             loc = decompData.find(',')
             imageID = decompData[:loc]
-            print("image id = {}".format(imageID))
+            #print("image id = {}".format(imageID))
             decompData = decompData[loc+1:]
             imageBuffer = decompData
-            print("got the image")
+            #print("got the image")
 
             cx, cy = findBlob(np.array(bytearray(imageBuffer), dtype="uint8").reshape(HEIGHT,WIDTH))
 
@@ -116,8 +112,9 @@ while True:
             veldat.forwardVelocity = forwardVelocity
             veldat.angularVelocity = angularVelocity
             veldat.id = float(imageID)
-            print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
+            #print("sending the velocity data: {} {}".format(veldat.forwardVelocity, veldat.angularVelocity))
             sendRespChannel.put(veldat)
+            #print ("time to send {}".format(time.time()-startTime))
         except Exception as details:
             print 'could not decompress image stuffs error: %s' % (details)
             imageBuffer = None

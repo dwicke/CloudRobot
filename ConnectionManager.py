@@ -91,7 +91,7 @@ class ConnectionManager(object):
             ssock = [self.server_socket]
         ready_socks,_,_ = select.select(ssock, [], [])
         for sock in ready_socks:
-            data, addr = sock.recvfrom(4096) # This is will not block
+            data, addr = sock.recvfrom(320*240*4) # This is will not block
             if self.connType == 'tcp' and self.isServer == False:
                 addr = self.clientIPPort[sock]
             elif self.connType == 'tcp' and self.isServer == True:
